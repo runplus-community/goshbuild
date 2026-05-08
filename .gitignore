@@ -1,0 +1,8 @@
+# goshbuild generated artifacts
+.con/
+conversions/
+vendor/
+*.run.sh
+*.run.sh.test.sh
+*.run.corrupt.sh
+*.tar.gz
