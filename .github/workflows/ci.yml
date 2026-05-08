@@ -56,11 +56,10 @@ jobs:
         shell: pwsh
         run: |
           [void][scriptblock]::Create((Get-Content -Raw -LiteralPath '.\goshbuild.ps1'))
-          [void][scriptblock]::Create((Get-Content -Raw -LiteralPath '.\gobuild.ps1'))
 
       - name: Pack demo app
         shell: pwsh
-        run: powershell -ExecutionPolicy Bypass -File .\gobuild.ps1 pack .\demo-app .\demo-app\demo-app.run.sh
+        run: powershell -ExecutionPolicy Bypass -File .\goshbuild.ps1 pack .\demo-app .\demo-app\demo-app.run.sh
 
       - name: Run demo acceptance tests
         shell: pwsh
