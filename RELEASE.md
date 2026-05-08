@@ -1,4 +1,4 @@
-# goshbuild v0.1.0
+# goshbuild v1.0.0
 
 ## Summary
 
@@ -13,14 +13,15 @@ preserving the full source tree inside the bundle.
 - build caching per environment
 - `goshbuild.sh` and `goshbuild.ps1`
 - bundled `demo-app/` for quick validation
+- `test_goshbuild.sh` as the higher-order demo harness
+- `dist-demo-app/` with a single runner diagram for review
 
 ## Tested in this workspace
 
 - `bash -n goshbuild.sh`
 - PowerShell parse of `goshbuild.ps1`
-- `powershell -ExecutionPolicy Bypass -File .\goshbuild.ps1 pack .\demo-app .\demo-app\demo-app.run.sh`
-- `bash goshbuild.sh pack ./demo-app ./demo-app/demo-app.run.sh`
-- `bash ./demo-app/demo-app.run.sh.test.sh`
+- `bash ./test_goshbuild.sh`
+- `bash ./dist-demo-app/github_com_example_demo-app.run.sh.test.sh`
 - Windows pack/run path validated through `goshbuild.ps1`
 - CI workflow added at `.github/workflows/ci.yml`
 
@@ -28,3 +29,4 @@ preserving the full source tree inside the bundle.
 
 - The demo runner acceptance suite passed `15/15`.
 - First run in a new environment performs a build, then later runs reuse the cached binary when the cache key matches.
+- Generated review outputs can be inspected directly with `bash`.
