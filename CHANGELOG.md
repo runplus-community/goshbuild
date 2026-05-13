@@ -7,7 +7,7 @@ Public v1 release of `goshbuild`.
 ### Changed
 
 - standardized on `goshbuild.ps1` for Windows
-- removed the extra `gobuild.ps1` alias
+- removed the extra legacy PowerShell alias
 - kept the repo on a single Windows entry point
 - simplified `dist-demo-app/` to a single runner diagram
 - renamed the root demo harness to `test_goshbuild.sh`

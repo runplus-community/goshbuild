@@ -1,6 +1,18 @@
 # goshbuild
 
-`goshbuild` packages a Go module into a self-contained shell runner.
+Reviewable Go execution handoffs.
+
+`goshbuild` makes Go build behavior visible, version-controlled, and reviewable before it runs locally or in CI.
+
+> Do not execute what you cannot review.
+
+`goshbuild` is a reference implementation of `GOSHB-001` from [`runplus-community/reviewable-workflows`](https://github.com/runplus-community/reviewable-workflows/blob/dev/specs/execution-handoffs/goshbuild.md).
+
+## Why This Exists
+
+Build and release helpers are often hidden in README instructions, CI config, local scripts, or binary-only handoffs.
+
+`goshbuild` packages a Go module into a self-contained shell runner so the source and build behavior remain inspectable.
 
 The bundle preserves the module source and build inputs, then emits a single
 `sh` or `ps1` entry point that extracts, verifies, builds, and executes the
@@ -14,10 +26,32 @@ It sits between two delivery models:
 `goshbuild` keeps the source tree intact and ships one runnable file per target
 platform.
 
+## How It Connects To Reviewable Workflow Handoffs
+
+Reviewable Workflow Handoffs is the spec direction from [`runplus-community/reviewable-workflows`](https://github.com/runplus-community/reviewable-workflows).
+
+`goshbuild` implements the Go execution handoff lane: it answers what source and build behavior are being handed to a developer shell or CI runner before execution.
+
 Root-level entry points:
 
 - `goshbuild.ps1` for PowerShell on Windows
 - `test_goshbuild.sh` as the higher-order demo harness
+
+## Install / Build
+
+No package install is required for the current shell implementation.
+
+Run the packer from this repo:
+
+```bash
+bash ./goshbuild.sh pack ./demo-app ./demo-app/demo-app.run.sh
+```
+
+On Windows, use the PowerShell wrapper:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\goshbuild.ps1 pack .\demo-app .\demo-app\demo-app.run.sh
+```
 
 ## Quick Start
 
@@ -167,10 +201,41 @@ bash .\dist-demo-app\github_com_example_demo-app.run.sh.test.sh
 - `base64`
 - `bash` for the generated runner
 
+## Reviewability Model
+
+Before trusting a `goshbuild` handoff, review:
+
+- the source module being packed
+- the generated `.run.sh` runner
+- the payload checksum
+- the embedded payload marker and generated test script
+- the `go build` path inside the runner
+- the cache key inputs: module identity, platform, Go version, and payload hash
+
+The runner verifies the payload before extraction, builds with the local Go toolchain, caches the binary, and then `exec`s the result with the original arguments.
+
+## Security Notes
+
+`goshbuild` does not guarantee safe execution and does not replace dependency scanning, signing, SLSA, OpenSSF Scorecard, SBOMs, CI hardening, sandboxing, or code review.
+
+It focuses on making the Go execution handoff visible and reviewable before it runs.
+
+## Non-Goals
+
+- replacing Go build tooling
+- replacing CI security
+- proving that embedded source is safe
+- proving that generated runners are safe to execute without review
+- replacing normal code review
+
 ## Release Notes
 
 - [CHANGELOG.md](CHANGELOG.md)
 - [RELEASE.md](RELEASE.md)
+
+## Contributing
+
+Contributions should improve clarity, inspectability, reproducibility, accurate docs, and tests. Avoid adding hidden execution behavior.
 
 ## License
 
