@@ -32,6 +32,10 @@ Reviewable Workflow Handoffs is the spec direction from [`runplus-community/revi
 
 `goshbuild` implements the Go execution handoff lane: it answers what source and build behavior are being handed to a developer shell or CI runner before execution.
 
+## Visual Model
+
+![goshbuild Reviewable Go Execution Handoff](docs/assets/goshbuild-execution-handoff.png)
+
 ## Before / After
 
 Before:
