@@ -15,16 +15,15 @@ Build and release helpers are often hidden in README instructions, CI config, lo
 `goshbuild` packages a Go module into a self-contained shell runner so the source and build behavior remain inspectable.
 
 The bundle preserves the module source and build inputs, then emits a single
-`sh` or `ps1` entry point that extracts, verifies, builds, and executes the
-Go program at runtime.
+`.run.sh` entry point that extracts, verifies, builds, and executes the Go
+program at runtime.
 
 It sits between two delivery models:
 
 - binary-only distribution
 - source-only repository delivery
 
-`goshbuild` keeps the source tree intact and ships one runnable file per target
-platform.
+`goshbuild` keeps the source tree intact and ships one runnable shell file.
 
 ## How It Connects To Reviewable Workflow Handoffs
 
@@ -51,7 +50,7 @@ After:
 
 Root-level entry points:
 
-- `goshbuild.ps1` for PowerShell on Windows
+- `goshbuild.sh` for packing a Go module into a shell runner
 - `test_goshbuild.sh` as the higher-order demo harness
 
 ## Install / Build
@@ -64,22 +63,11 @@ Run the packer from this repo:
 bash ./goshbuild.sh pack ./demo-app ./demo-app/demo-app.run.sh
 ```
 
-On Windows, use the PowerShell wrapper:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\goshbuild.ps1 pack .\demo-app .\demo-app\demo-app.run.sh
-```
-
 ## Quick Start
 
 ```bash
 bash ./test_goshbuild.sh
 bash ./dist-demo-app/github_com_example_demo-app.run.sh --help
-```
-
-```powershell
-bash ./test_goshbuild.sh
-bash .\dist-demo-app\github_com_example_demo-app.run.sh --help
 ```
 
 ## Output
@@ -101,7 +89,7 @@ and you can run the `.run.sh` and `.test.sh` files directly with `bash`.
 ```text
 +-------------------------------+     +-------------------------------+     +-------------------------------+
 | GO MODULE SOURCE              | --> | GOSHBUILD PACK                | --> | GENERATED RUNNER              |
-| go.mod / *.go / assets        |     | vendor / tar / hash / b64     |     | <name>.run.sh / .ps1          |
+| go.mod / *.go / assets        |     | vendor / tar / hash / b64     |     | <name>.run.sh                 |
 | source stays in payload       |     | runner stub + checksum        |     | one runnable file             |
 +-------------------------------+     +-------------------------------+     +---------------+---------------+
                                                                                         |
@@ -116,13 +104,13 @@ and you can run the `.run.sh` and `.test.sh` files directly with `bash`.
 
 ## Behavior
 
-- Any Go module can be delivered as a single `sh` or `ps1` entry point.
+- Any Go module can be delivered as a single `.run.sh` entry point.
 - The source tree remains multi-file and inspectable, while the handoff artifact stays single-file.
 - The first run in a new environment performs a build; later runs reuse the cached binary when the cache key matches.
 - Payload verification happens before extraction, which provides a corruption check before any source is unpacked.
 - Cache keys include module identity, `GOOS/GOARCH`, Go version, and payload hash.
 - Go compile time is low enough that first-run builds remain practical in CI.
-- Unix-like environments use the bash demo harness; Windows uses `goshbuild.ps1`.
+- The current reference flow uses `bash` and generated `.run.sh` files.
 
 ## Use Cases
 
@@ -140,7 +128,7 @@ Go compile time stays low enough that first-run builds are practical and repeat 
 
 ### 3. Support and incident-response bundle
 
-An ops or support team can package a recovery tool, ship it as a single `.run.sh` or `.ps1`, and run it on a locked-down machine without installing Go or pulling dependencies from the network.
+An ops or support team can package a recovery tool, ship it as a single `.run.sh`, and run it on a locked-down machine without installing Go or pulling dependencies from the network.
 
 The checksum check provides an integrity gate before extraction.
 
@@ -161,12 +149,6 @@ bash ./dist-demo-app/github_com_example_demo-app.run.sh --help
 bash ./dist-demo-app/github_com_example_demo-app.run.sh.test.sh
 ```
 
-```powershell
-bash ./test_goshbuild.sh
-bash .\dist-demo-app\github_com_example_demo-app.run.sh --help
-bash .\dist-demo-app\github_com_example_demo-app.run.sh.test.sh
-```
-
 ## Post-build Outputs
 
 ```text
@@ -185,30 +167,18 @@ For a deeper breakdown of the pack-time and runtime structure, see [dist-demo-ap
 Current workspace validation:
 
 - `bash -n ./test_goshbuild.sh`
-- PowerShell parse of `goshbuild.ps1`
 - `bash ./test_goshbuild.sh`
 - `bash ./dist-demo-app/github_com_example_demo-app.run.sh.test.sh`
-- Windows pack/run validation passed through the `goshbuild.ps1` path
 - GitHub Actions CI workflow added at [.github/workflows/ci.yml](.github/workflows/ci.yml)
 
 The demo test suite passed `15/15` in this workspace.
 
 ## Usage
 
-### Bash
-
 ```bash
 bash ./test_goshbuild.sh
 bash ./dist-demo-app/github_com_example_demo-app.run.sh --help
 bash ./dist-demo-app/github_com_example_demo-app.run.sh.test.sh
-```
-
-### PowerShell
-
-```powershell
-bash ./test_goshbuild.sh
-bash .\dist-demo-app\github_com_example_demo-app.run.sh --help
-bash .\dist-demo-app\github_com_example_demo-app.run.sh.test.sh
 ```
 
 ## Requirements

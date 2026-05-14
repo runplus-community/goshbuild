@@ -11,7 +11,7 @@ preserving the full source tree inside the bundle.
 - source-preserving artifact format
 - verification before extraction
 - build caching per environment
-- `goshbuild.sh` and `goshbuild.ps1`
+- `goshbuild.sh`
 - bundled `demo-app/` for quick validation
 - `test_goshbuild.sh` as the higher-order demo harness
 - `dist-demo-app/` with a single runner diagram for review
@@ -19,10 +19,8 @@ preserving the full source tree inside the bundle.
 ## Tested in this workspace
 
 - `bash -n goshbuild.sh`
-- PowerShell parse of `goshbuild.ps1`
 - `bash ./test_goshbuild.sh`
 - `bash ./dist-demo-app/github_com_example_demo-app.run.sh.test.sh`
-- Windows pack/run path validated through `goshbuild.ps1`
 - CI workflow added at `.github/workflows/ci.yml`
 
 ## Notes

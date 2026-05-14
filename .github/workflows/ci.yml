@@ -39,28 +39,3 @@ jobs:
         run: bash ./demo-app/demo-app.run.sh.test.sh
         shell: bash
 
-  windows:
-    name: Windows
-    runs-on: windows-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.23.x"
-
-      - name: Validate PowerShell packers
-        shell: pwsh
-        run: |
-          [void][scriptblock]::Create((Get-Content -Raw -LiteralPath '.\goshbuild.ps1'))
-
-      - name: Pack demo app
-        shell: pwsh
-        run: powershell -ExecutionPolicy Bypass -File .\goshbuild.ps1 pack .\demo-app .\demo-app\demo-app.run.sh
-
-      - name: Run demo acceptance tests
-        shell: pwsh
-        run: bash .\demo-app\demo-app.run.sh.test.sh
